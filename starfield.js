@@ -6,16 +6,16 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const stars = [];
-const numStars = 1000; // Number of stars
-const speed = 1;      // Speed of movement
+const numStars = 200; // Number of stars
+const speed = 2;      // Speed of movement
 
 // Create stars
 function initializeStars() {
     stars.length = 0;
     for (let i = 0; i < numStars; i++) {
         stars.push({
-            x: (Math.random() - 0.5) * canvas.width, // Spread across -width/2 to +width/2
-            y: (Math.random() - 0.5) * canvas.height, // Spread across -height/2 to +height/2
+            x: (Math.random() - 0.5) * canvas.width * 2, // Spread stars over a wide range
+            y: (Math.random() - 0.5) * canvas.height * 2,
             z: Math.random() * canvas.width // Depth value for perspective
         });
     }
@@ -27,7 +27,8 @@ function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let star of stars) {
-        const k = 128.0 / star.z; // Perspective scaling factor
+        // Perspective projection
+        const k = 128.0 / star.z;
         const px = star.x * k + canvas.width / 2;
         const py = star.y * k + canvas.height / 2;
 
@@ -46,8 +47,8 @@ function drawStars() {
         // Reset star to the back if it moves past the viewer
         if (star.z <= 0) {
             star.z = canvas.width;
-            star.x = (Math.random() - 0.5) * canvas.width;
-            star.y = (Math.random() - 0.5) * canvas.height;
+            star.x = (Math.random() - 0.5) * canvas.width * 2;
+            star.y = (Math.random() - 0.5) * canvas.height * 2;
         }
     }
 
