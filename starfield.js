@@ -7,15 +7,15 @@ canvas.height = window.innerHeight;
 
 const stars = [];
 const numStars = 500; // Number of stars
-const speed = 2;      // Speed of movement
+const speed = 0.5;      // Speed of movement
 
 // Create stars uniformly distributed in a 3D space
 function initializeStars() {
     stars.length = 0;
     for (let i = 0; i < numStars; i++) {
         stars.push({
-            x: Math.random() * canvas.width - canvas.width / 2, // Spread stars across the full screen
-            y: Math.random() * canvas.height - canvas.height / 2,
+            x: Math.random() * canvas.width - canvas.width, // Spread stars across the full screen
+            y: Math.random() * canvas.height - canvas.height,
             z: Math.random() * canvas.width // Depth value for perspective
         });
     }
