@@ -12,6 +12,20 @@
             height: 100%;
             overflow: hidden;
             background: #000040;
+            color: white;
+            font-family: 'Arial', sans-serif;  /* Default font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Starfield canvas */
+        #starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
         }
 
         /* Centered text styling */
@@ -42,12 +56,12 @@
 </head>
 <body>
     <canvas id="starfield"></canvas>
-    <script src="starfield.js"></script>
     <div class="centered-text">
         <h1>Adam Dillamore</h1>
         <p>Postdoctoral research assistant</p>
         <p>University College London</p>
         <p>adam.dillamore@ucl.ac.uk</p>
     </div>
+    <script src="starfield.js"></script>
 </body>
 </html>
