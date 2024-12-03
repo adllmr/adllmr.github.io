@@ -14,8 +14,8 @@ function initializeStars() {
     stars.length = 0;
     for (let i = 0; i < numStars; i++) {
         stars.push({
-            x: Math.random() * canvas.width*10 - canvas.width*5, // Spread stars across the full screen
-            y: Math.random() * canvas.height*10 - canvas.height*5,
+            x: Math.random() * canvas.width * 10 - canvas.width * 5, // Spread stars across the full screen
+            y: Math.random() * canvas.height * 10 - canvas.height * 5,
             z: Math.random() * canvas.width // Depth value for perspective
         });
     }
@@ -47,8 +47,8 @@ function drawStars() {
         // Reset stars when they "pass" the viewer
         if (star.z <= 0) {
             star.z = canvas.width;
-            star.x = Math.random() * canvas.width*10 - canvas.width*5;
-            star.y = Math.random() * canvas.height*10 - canvas.height*5;
+            star.x = Math.random() * canvas.width * 10 - canvas.width * 5;
+            star.y = Math.random() * canvas.height * 10 - canvas.height * 5;
         }
     }
 
