@@ -36,6 +36,15 @@
             font-size: 1em;
         }
 
+        /* Styling for the photo */
+        .centered-text img {
+            width: 150px; /* Adjust size as needed */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 50%; /* Makes it circular if the image is square */
+            margin-bottom: 20px; /* Adds space below the photo */
+            border: 3px solid white; /* Optional border around the photo */
+        }
+
         .centered-text h1 {
             text-align: center;
             margin: 5px;
@@ -77,6 +86,7 @@
 <body>
     <canvas id="starfield"></canvas>
     <div class="centered-text">
+        <img src="photo.jpg" alt="Photo">
         <h1>Adam Dillamore</h1>
         <p>Postdoctoral research assistant</p>
         <p>University College London</p>
