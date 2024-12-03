@@ -7,7 +7,7 @@ canvas.height = window.innerHeight;
 
 const stars = [];
 const numStars = 10000; // Number of stars
-const speed = 0.5;      // Speed of movement
+const speed = canvas.width / 5000;      // Speed of movement
 
 // Create stars uniformly distributed in a 3D space
 function initializeStars() {
