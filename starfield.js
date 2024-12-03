@@ -6,16 +6,16 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const stars = [];
-const numStars = 200; // Number of stars
+const numStars = 500; // Number of stars
 const speed = 2;      // Speed of movement
 
-// Create stars
+// Create stars uniformly distributed in a 3D space
 function initializeStars() {
     stars.length = 0;
     for (let i = 0; i < numStars; i++) {
         stars.push({
-            x: (Math.random() - 0.5) * canvas.width * 2, // Spread stars over a wide range
-            y: (Math.random() - 0.5) * canvas.height * 2,
+            x: Math.random() * canvas.width - canvas.width / 2, // Spread stars across the full screen
+            y: Math.random() * canvas.height - canvas.height / 2,
             z: Math.random() * canvas.width // Depth value for perspective
         });
     }
@@ -28,27 +28,27 @@ function drawStars() {
 
     for (let star of stars) {
         // Perspective projection
-        const k = 128.0 / star.z;
+        const k = 128.0 / star.z; // Projection scale factor
         const px = star.x * k + canvas.width / 2;
         const py = star.y * k + canvas.height / 2;
 
-        // Ensure stars are visible within the canvas
+        // Draw stars only if they are within the visible canvas
         if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-            const size = (1 - star.z / canvas.width) * 2;
+            const size = (1 - star.z / canvas.width) * 2; // Size based on depth
             ctx.fillStyle = "white";
             ctx.beginPath();
             ctx.arc(px, py, size, 0, 2 * Math.PI);
             ctx.fill();
         }
 
-        // Move the star closer
+        // Move the star closer to simulate motion
         star.z -= speed;
 
-        // Reset star to the back if it moves past the viewer
+        // Reset stars when they "pass" the viewer
         if (star.z <= 0) {
             star.z = canvas.width;
-            star.x = (Math.random() - 0.5) * canvas.width * 2;
-            star.y = (Math.random() - 0.5) * canvas.height * 2;
+            star.x = Math.random() * canvas.width - canvas.width / 2;
+            star.y = Math.random() * canvas.height - canvas.height / 2;
         }
     }
 
@@ -57,7 +57,7 @@ function drawStars() {
 
 drawStars();
 
-// Adjust canvas size and reinitialize stars on window resize
+// Handle window resize
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
