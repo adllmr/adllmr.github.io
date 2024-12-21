@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galactic Space Flight Simulator</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #000040;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+        }
+        a:link {
+            color: cyan;
+            background-color: transparent;
+            }
+            a:visited {
+            color: cyan;
+            background-color: transparent;
+            }
+        #sliderContainer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: Courier, sans-serif;
+        }
+        .slider-group {
+            display: flex;
+            flex-direction: row; 
+            align-items: center;
+            margin-right: 10px
+        }
+        .slider-group label {
+            margin-right: 10px; /* Space between label and slider */
+        }
+        #infoContainer {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            color: white;
+            font-family: Courier, sans-serif;
+        }
+        #instructionScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 64, 0.8);
+            color: white;
+            font-family: Courier, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            line-height: 0.5;
+        }
+        #aboutScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 64, 0.8);
+            color: white;
+            font-family: Courier, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            line-height: 0.5;
+        }
+        strong {
+            color: cyan; /* Change text color */
+        }
+        input[type="range"] {
+            -webkit-appearance: none; /* Remove default styling */
+            width: 25%; /* Full width */
+            height: 8px; /* Height of the slider */
+            background: #ccc; /* Default track color */
+            outline: none; /* Remove outline */
+            opacity: 0.9; /* Transparency */
+            transition: background 0.2s; /* Smooth transition */
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Remove default styling */
+            appearance: none; /* Remove default styling */
+            width: 20px; /* Thumb width */
+            height: 20px; /* Thumb height */
+            background: white; /* Thumb color */
+            cursor: pointer; /* Pointer cursor */
+            border-radius: 50%; /* Rounded thumb */
+        }
+
+        input[type="range"]:hover {
+            background: #888; /* Highlight track on hover */
+        }
+    </style>
+</head>
+<body>
+    <div id="sliderContainer">
+        <div class="slider-group">
+            <label for="curlyRSlider">Corotation radius/bar length (<span style="font-family:cursive">R</span>): </label>
+            <input type="range" id="curlyRSlider" min="1" max="2" step="0.001" value="1.20">
+            <span id="curlyRValue" style="margin-left: 10px;">1.20</span>
+        </div>
+        <!-- <label for="omegaSlider">Pattern speed (&Omega;): </label>
+        <input type="range" id="omegaSlider" min="0" max="0.01" step="0.0001" value="0.005">
+        <span id="omegaValue">0.005</span> -->
+        <br>
+        <div class="slider-group">
+            <label for="aSlider">Bar length (<i>a</i>): </label>
+            <input type="range" id="aSlider" min="0.0001" max="8" step="0.01" value="3.0">
+            <span id="aValue" style="margin-left: 10px;">3.0</span>
+        </div>
+        <br>
+        <div class="slider-group">
+            <label for="etaSlider">Deceleration <i>&eta;</i>: </label>
+            <input type="range" id="etaSlider" min="-0.1" max="0.1" step="0.001" value="0.000">
+            <span id="etaValue" style="margin-left: 10px;">0.000</span>
+        </div>
+        <br>
+        <div class="slider-group">
+            <label for="speedSlider">Simulation speed: </label>
+            <input type="range" id="speedSlider" min="0.1" max="10" step="0.1" value="1.0">
+            <span id="speedValue" style="margin-left: 10px;">1.0</span>
+        </div>
+        <br>
+        <div class="slider-group">
+            <label for="projTimeSlider">Projected orbit length: </label>
+            <input type="range" id="projTimeSlider" min="100" max="20000" step="100" value="5000">
+            <span id="projTimeValue" style="margin-left: 10px;">5000</span>
+        </div>
+        <br><br>
+        <label for="frameCheckbox" style="color:white">Rotating frame</label>
+        <input type="checkbox" id="frameCheckbox" checked>
+        <br>
+        <label for="orbitCheckbox" style="color:cyan">Projected orbit</label>
+        <input type="checkbox" id="orbitCheckbox" checked>
+        <br>
+        <label for="contourCheckbox" style="color:yellow">Effective potential contours</label>
+        <input type="checkbox" id="contourCheckbox" checked>
+        <br>
+        <label for="starsCheckbox" style="color:white">Stars animation</label>
+        <input type="checkbox" id="starsCheckbox">
+      </div>
+      <div id="infoContainer">
+        <p>Press <strong>[i]</strong> for instructions</p>
+        <p>Press <strong>[j]</strong> for more information</p>
+        <p>Press <strong>[r]</strong> to return ship to <i>L</i><sub>5</sub></p>
+      </div>
+      <div id="instructionScreen">
+        <h1 style="color:cyan">A spaceship walks into a bar...</h1>
+        <h2 style="color:cyan">Welcome to the <strong>Galactic Bar Flight Simulator</strong>!</h2>
+        <p>Navigate the <strong>RSS <i>Lynden-Bell</i></strong> through the rotating barred potential
+        <p>You begin at the L<sub>5</sub> Lagrange point, in a stable orbit at the corotation resonance. Which other orbits can you reach?
+        <h2 style="color:cyan">Controls</h2>
+        <p>Use the <strong>Left</strong> and <strong>Right Arrow Keys</strong> to rotate your ship</p>
+        <p>Use the <strong>Up Arrow Key</strong> to fire the main engine</p>
+        <p>Hold <strong>Shift</strong> while firing to use reduced thrust</p>
+        <h2 style="color:cyan">Customisation</h2>
+        <p>Adjust the bar's pattern speed, length, and deceleration rate with the sliders</p>
+        <p>You can also speed up the simulation and change the length of the projected orbit</p>
+        <p>Toggle rotating reference frame, projected orbit, effective potential contours, and animated stars with the checkboxes</p>
+        <h2 style="color:cyan">Help</h2>
+        <p>Press <strong>[i]</strong> at any time to return to this screen</p>
+        <p>Press <strong>[j]</strong> for more information</p>
+        <p>Press <strong>[r]</strong> to return the ship to <i>L</i><sub>5</sub></p>
+        <p>Beware of those coriolis forces!</p>
+        <h2 style="color:cyan">Press any key to start</h2>
+    </div>
+    <div id="aboutScreen">
+        <h1 style="color:cyan">About</h1>
+        <h2 style="color:cyan">Gravitational potential</h2>
+        <p>The barred potential implemented is taken from equation (5) in <a href="https://academic.oup.com/mnras/article/469/4/4414/3828797" target="_blank">Williams & Evans (2017)</a>.</p>
+        <p>This is produced by convolving a cored axisymmetric logarithmic potential with a needle density along the <i>x</i>-axis spanning [-<i>a</i>, <i>a</i>].</p>
+        <p>The bar length <i>a</i> is expressed in units of the core radius <i>R</i><sub>c</sub> (equal to 50 pixels).</p>
+        <p>The asymptotic circular speed of the logarithmic potential is <i>v</i><sub>0</sub> = 1.</p>
+        <h2 style="color:cyan">Rotation</h2>
+        <p>By default the simulator is run in a frame corotating clockwise with the bar. This adds coriolis and centrifugal forces to the equations of motion.</p>
+        <p>The pattern speed is encoded in the ratio of the corotation radius to the bar length, <span style="font-family:cursive">R</span> = <i>R</i><sub>CR</sub>/<i>a</i>.</p>
+        <p>Optionally the pattern speed can be accelerated or decelerated with time. In this case the spaceship also experiences an Euler force.</p>
+        <p>The deceleration rate of the bar is quantified by the dimensionless deceleration parameter <i>&eta;</i> = <i>R&#775;</i><sub>CR</sub>/<i>v</i><sub>0</sub>.</p>
+        <h2 style="color:cyan">The background</h2>
+        <p>The cyan line indicates the future orbit of the spaceship, if no thrust is applied.</p>
+        <p>The yellow points indicate contours of the effective potential, including a centrifugal term.</p>
+        <p>The animated stars (off by default) follow circular paths at approximately the circular speed of the background logarithmic potential.</p>
+        <p>The radius at which the stars are stationary in the rotating frame indicates the corotation radius.</p>
+        <h2 style="color:cyan">Press any key to return to the simulator</h2>
+        
+    </div>
+    <canvas id="spaceCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("spaceCanvas");
+        const ctx = canvas.getContext("2d");
+        const instructionScreen = document.getElementById("instructionScreen");
+
+        aboutScreen.style.display = "none"
+
+        // Show instruction screen when 'I' is pressed
+        function showScreen(e) {
+            if (e.key === 'i' || e.key === 'I') {
+                instructionScreen.style.display = "flex";
+                window.addEventListener("keydown", hideInstructionScreen);
+                window.removeEventListener("keydown", reset);
+            }
+            
+            if (e.key === 'j' || e.key === 'J') {
+                aboutScreen.style.display = "flex";
+                window.addEventListener("keydown", hideAboutScreen);
+                window.removeEventListener("keydown", reset);
+            }
+        }
+
+        // Hide instruction screen on any key press
+        function hideInstructionScreen() {
+            // window.removeEventListener("keydown", reset);
+            instructionScreen.style.display = "none";
+            window.removeEventListener("keydown", hideInstructionScreen);
+            window.addEventListener("keydown", reset);
+        }
+
+        function hideAboutScreen() {
+            // window.removeEventListener("keydown", reset);
+            aboutScreen.style.display = "none";
+            window.removeEventListener("keydown", hideAboutScreen);
+            window.addEventListener("keydown", reset);
+        }
+
+        function reset(e) {
+            if (e.key === 'r' || e.key === 'R') {
+                ship.x = canvas.width/2;
+                ship.y = canvas.height/2 - R_CR;
+                ship.vx = 0;
+                ship.vy = 0;
+                ship.angle = 0;
+            }
+        }
+
+        window.addEventListener("keydown", showScreen);
+        window.addEventListener("keydown", hideInstructionScreen);
+        
+        // Resize canvas to fit window
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        
+        // Game variables
+        const keys = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, Shift: false };
+        // const gravityConstant = 50; // Custom gravitational constant
+        const Rc = 50; // Potential core radius
+        const v0 = 1; // Logarithmic potential circular speed (if applicable)
+        let curlyR = 1.2;
+        let a = 3 * Rc;
+        let eta = 0;
+        let Dt = 1 // Time between refreshes
+        let projTime = 5000;  // Projected orbit length
+
+        let R_CR = curlyR * a;
+        let Omega = (-gravitationalForce(canvas.width/2, canvas.height/2+R_CR, a).fy / R_CR)**0.5;
+        let aDot = 0; // Rate of change of bar length
+        let OmegaDot = 0; // Rate of change of rotation rate
+        let theta = 0; // Bar angle
+
+        const dt = 0.1;
+
+        const ship = {
+            x: canvas.width / 2,
+            y: canvas.height / 2 - R_CR, // Approximate location of the Sun
+            angle: 0, // Facing direction in radians
+            vx: 0,    // Velocity x
+            vy: 0,    // Velocity y
+            thrust: 0.001, // Acceleration when thruster is on
+            size: 20, // Ship size for rendering
+        };
+
+        const ship_init = structuredClone(ship);
+
+        const curlyRSlider = document.getElementById("curlyRSlider");
+        const curlyRValue = document.getElementById("curlyRValue");
+        curlyRSlider.addEventListener("input", () => {
+            curlyR = parseFloat(curlyRSlider.value);
+            curlyRValue.textContent = curlyR.toFixed(2);
+            R_CR = curlyR * a
+            Omega = (-gravitationalForce(canvas.width/2, canvas.height/2+R_CR, a).fy / R_CR)**0.5
+            aDot = v0 * eta / curlyR
+            OmegaDot = calcOmegaDot(a, aDot, curlyR, Omega, dt)
+        });
+
+        const aSlider = document.getElementById("aSlider");
+        const aValue = document.getElementById("aValue");
+        aSlider.addEventListener("input", () => {
+            a = parseFloat(aSlider.value) * Rc;
+            aValue.textContent = (a/Rc).toFixed(1);
+            R_CR = curlyR * a
+            Omega = (-gravitationalForce(canvas.width/2, canvas.height/2+R_CR, a).fy / R_CR)**0.5
+        });
+
+        const speedSlider = document.getElementById("speedSlider");
+        const speedValue = document.getElementById("speedValue");
+        speedSlider.addEventListener("input", () => {
+            Dt = parseFloat(speedSlider.value);
+            speedValue.textContent = Dt.toFixed(1);
+            console.log(Math.round(Dt / dt))
+        });
+
+        const projTimeSlider = document.getElementById("projTimeSlider");
+        const projTimeValue = document.getElementById("projTimeValue");
+        projTimeSlider.addEventListener("input", () => {
+            projTime = parseFloat(projTimeSlider.value);
+            projTimeValue.textContent = projTime.toFixed(0);
+        });
+
+        const etaSlider = document.getElementById("etaSlider");
+        const etaValue = document.getElementById("etaValue");
+        etaSlider.addEventListener("input", () => {
+            eta = parseFloat(etaSlider.value);
+            etaValue.textContent = eta.toFixed(4);
+            aDot = v0 * eta / curlyR
+            OmegaDot = calcOmegaDot(a, aDot, curlyR, Omega, dt)
+        });
+
+        const frameCheckbox = document.getElementById("frameCheckbox");
+        const orbitCheckbox = document.getElementById("orbitCheckbox");
+        const contourCheckbox = document.getElementById("contourCheckbox");
+        const starsCheckbox = document.getElementById("starsCheckbox");
+
+        // // Define custom gravitational potential
+        function Phi(x, y, a) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const dx = x - cx;
+            const dy = y - cy;
+            
+            const T = (Rc**2 + dy**2)**0.5
+            const chi0 = dx - a
+            const chi1 = dx + a
+
+            return v0**2 / (4 * a) * ((chi1 * Math.log(chi1**2 + T**2) + 2 * T * Math.atan2(chi1, T)) - (chi0 * Math.log(chi0**2 + T**2) + 2 * T * Math.atan2(chi0, T)))
+        }
+
+        function Phi_eff(x, y, a, Omega) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const dx = x - cx;
+            const dy = y - cy;
+            const R = (dx**2 + dy**2)**0.5;
+
+            return Phi(x, y, a) - 0.5 * Omega**2 * R**2
+        }
+
+        // Calculate gravitational force
+        function gravitationalForce(x, y, a) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const dx = x - cx;
+            const dy = y - cy;
+
+            const T = (Rc**2 + dy**2)**0.5
+            const chi0 = dx - a
+            const chi1 = dx + a
+
+            const forcex = -1 * v0**2 / (4 * a) * (Math.log(chi1**2 + T**2) - Math.log(chi0**2 + T**2))
+            const forcey = -1 * dy * v0**2 / (2 * a * T) * (Math.atan2(chi1, T) - Math.atan2(chi0, T))
+
+            return {
+                fx: forcex,
+                fy: forcey,
+            };
+        }
+
+        // Add on fictitious forces
+        function totalForce(x, y, vx, vy, a, Omega, OmegaDot) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const dx = x - cx;
+            const dy = y - cy;
+            gfx = gravitationalForce(x, y, a).fx
+            gfy = gravitationalForce(x, y, a).fy
+            return {
+                fx: gfx + 2 * Omega * vy + Omega**2 * dx + OmegaDot * dy,
+                fy: gfy - 2 * Omega * vx + Omega**2 * dy - OmegaDot * dy,
+            };
+        }
+
+        // Function to calculate OmegaDot
+        function calcOmegaDot(a, aDot, curlyR, Omega, dt) {
+            const aNew = a + aDot * dt
+            const R_CRNew = curlyR * aNew
+            const OmegaNew = (-gravitationalForce(canvas.width/2, canvas.height/2+R_CRNew, aNew).fy / R_CRNew)**0.5
+            return (OmegaNew - Omega) / dt
+        }
+
+        // Stars on circular orbits
+        function starspeed(radius) {
+            const speed =  (-gravitationalForce(canvas.width/2, canvas.height/2+radius, a).fy / radius)**0.5 - Omega;
+            return speed
+        }
+
+        const stars = [];
+        const numStars = 2000;
+        const orbitRadiusMin = 0;
+        const orbitRadiusMax = Math.max(canvas.width, canvas.height) / 2;
+        for (let i = 0; i < numStars; i++) {
+            const radius = orbitRadiusMin + Math.random() * (orbitRadiusMax - orbitRadiusMin);
+            const angle = Math.random() * Math.PI * 2;
+            const speed = starspeed(radius); // Speed of orbit
+            stars.push({ radius, angle, speed });
+        }
+
+        // Input Handling
+        window.addEventListener("keydown", (e) => {
+            if (keys.hasOwnProperty(e.key)) keys[e.key] = true;
+        });
+
+        window.addEventListener("keyup", (e) => {
+            if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
+        });
+
+        function predictPath(startX, startY, startVx, startVy, steps, dt) {
+            const path = [];
+            let px = startX;
+            let py = startY;
+            let vx = startVx;
+            let vy = startVy;
+            let aPredict = structuredClone(a);
+            let R_CRPredict = structuredClone(R_CR);
+            let OmegaPredict = structuredClone(Omega);
+            let OmegaDotPredict = structuredClone(OmegaDot)
+            let thetaPredict = structuredClone(theta)
+
+            const interval = Math.round(Dt / dt)
+
+            for (let i = 0; i < steps; i++) {
+                const force = totalForce(px, py, vx, vy, aPredict, OmegaPredict, OmegaDotPredict);
+                vx += 0.5 * force.fx * dt;
+                vy += 0.5 * force.fy * dt;
+                px += vx * dt;
+                py += vy * dt;
+
+                if (aDot != 0) {
+                    OmegaDotPredict = calcOmegaDot(aPredict, aDot, curlyR, OmegaPredict, dt);
+                    const OmegaNewPredict = OmegaPredict + OmegaDotPredict * dt;
+                    OmegaPredict = structuredClone(OmegaNewPredict);
+                    aPredict += aDot * dt;
+                }
+
+                if (frameCheckbox.checked === false) thetaPredict += OmegaPredict * dt;
+                
+                const force_new = totalForce(px, py, vx, vy, aPredict, OmegaPredict, OmegaDotPredict);
+                vx += 0.5 * force_new.fx * dt;
+                vy += 0.5 * force_new.fy * dt;
+
+                if (Number.isInteger((i+1) / interval)) {
+                    path.push({ x: px, y: py, vx: vx, vy: vy, Omega:OmegaPredict, OmegaDot:OmegaDotPredict, theta:thetaPredict});
+                }
+            }
+            return path;
+        }
+
+        let predictedPath = predictPath(ship.x, ship.y, ship.vx, ship.vy, projTime/dt, dt)
+
+        // Game Loop
+        function update() {
+
+            // Rotate ship
+            if (keys.ArrowLeft) ship.angle -= 0.075;
+            if (keys.ArrowRight) ship.angle += 0.075;
+
+            // Lower thrust if shift key pressed
+            if (keys.Shift) ship.thrust = 0.0001;
+                else ship.thrust = 0.0005;
+
+            // Apply thrust
+            if (keys.ArrowUp) {
+                ship.vx += ship.thrust * Math.cos(ship.angle) * Dt;
+                ship.vy += ship.thrust * Math.sin(ship.angle) * Dt;
+            }
+
+            // Calculate projected orbit
+            if (orbitCheckbox.checked) steps = projTime/dt;
+                else steps = Math.round(Dt / dt)
+
+            predictedPath = predictPath(ship.x, ship.y, ship.vx, ship.vy, steps, dt)
+
+            // Retrieve new ship coordinates from projected orbit
+            ship.x = predictedPath[0].x
+            ship.y = predictedPath[0].y
+            ship.vx = predictedPath[0].vx
+            ship.vy = predictedPath[0].vy
+
+            Omega = predictedPath[0].Omega
+            OmegaDot = predictedPath[0].OmegaDot
+
+            // Increase bar length and angle
+            a += aDot * Dt
+            R_CR = curlyR * a
+
+            if (frameCheckbox.checked) theta = 0;
+            else theta += Omega * Dt
+
+            // Update bar length slider
+            aSlider.value = a/Rc;
+            aValue.textContent = (a/Rc).toFixed(1)
+
+            // Update stars' angles
+            stars.forEach(star => {
+                star.angle += starspeed(star.radius) * Dt;
+            });
+        }
+        
+        // Rotate coordinates into inertial frame (if applicable)
+        function xyInert(x, y, theta) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const dx = x - cx;
+            const dy = y - cy;
+
+            const xPrime = cx + dx * Math.cos(-theta) + dy * Math.sin(-theta)
+            const yPrime = cy - dx * Math.sin(-theta) + dy * Math.cos(-theta)
+            return {x: xPrime, y: yPrime}
+        }
+
+        function drawPotentialContours() {
+            const cols = 200; // Number of columns in the grid
+            const rows = 200; // Number of rows in the grid
+            const levels = 10; // Number of contour levels
+
+            const dx = canvas.width / cols;
+            const dy = canvas.width / rows;
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // Calculate potential values at each grid point
+            const grid = [];
+            for (let i = 0; i <= cols; i++) {
+                grid[i] = [];
+                for (let j = 0; j <= rows; j++) {
+                    const x = i * dx;
+                    const y = j * dy - (cx - cy);
+                    grid[i][j] = Phi_eff(x, y, a, Omega)
+                }
+            }
+
+            // // Determine contour levels
+            // const xmax = canvas.width/2
+            // const ymax = canvas.height/2
+            const minPhi = Phi_eff(cx, cy, a, Omega) //* v0**2 * Math.log(a**2 + xmax**2 + ymax**2 / q**2) - 0.5 * Omega**2 * (xmax**2 + ymax**2);
+            const maxPhi = Math.max(Phi_eff(cx, 0, a, Omega), Phi_eff(cx, cy - R_CR, a, Omega)-0.001); //
+            const deltaPhi = (maxPhi - minPhi) / levels;
+
+            // Draw contours
+            ctx.fillStyle = "yellow";
+            for (let l = 1; l <= levels; l++) {
+                const targetPhi = minPhi + l * deltaPhi;
+                ctx.lineWidth = 1;
+                // ctx.beginPath();
+
+                for (let i = 0; i < cols; i++) {
+                    for (let j = 0; j < rows; j++) {
+                        const phi00 = grid[i][j];
+                        const phi10 = grid[i + 1][j];
+                        const phi01 = grid[i][j + 1];
+
+                        // Interpolate contour crossing between grid points
+                        if ((phi00 < targetPhi && phi10 > targetPhi) || (phi00 > targetPhi && phi10 < targetPhi)) {
+                            const alpha = (targetPhi - phi00) / (phi10 - phi00);
+                            const x1 = i * dx + alpha * dx;
+                            const y1 = j * dy - (cx - cy);
+
+                            const x1Prime = xyInert(x1, y1, theta).x
+                            const y1Prime = xyInert(x1, y1, theta).y
+
+                            ctx.beginPath();
+                            ctx.arc(x1Prime, y1Prime, 1, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        if ((phi00 < targetPhi && phi01 > targetPhi) || (phi00 > targetPhi && phi01 < targetPhi)) {
+                            const alpha = (targetPhi - phi00) / (phi01 - phi00);
+                            const x2 = i * dx;
+                            const y2 = j * dy + alpha * dy - (cx - cy);
+
+                            const x2Prime = xyInert(x2, y2, theta).x
+                            const y2Prime = xyInert(x2, y2, theta).y
+
+                            ctx.beginPath();
+                            ctx.arc(x2Prime, y2Prime, 1, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+
+            }
+        }
+
+        function draw() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "black";
+
+            // Draw potential contours
+            if (contourCheckbox.checked) {
+                drawPotentialContours();
+            }
+
+            // Draw stars
+            ctx.fillStyle = "white";
+
+            if (starsCheckbox.checked) {
+                stars.forEach(star => {
+                    const cx = canvas.width / 2;
+                    const cy = canvas.height / 2;
+                    const x = cx + star.radius * Math.cos(star.angle);
+                    const y = cy + star.radius * Math.sin(star.angle);
+
+                    const xPrime = xyInert(x, y, theta).x
+                    const yPrime = xyInert(x, y, theta).y
+
+                    ctx.beginPath();
+                    ctx.arc(xPrime, yPrime, 1, 0, Math.PI * 2);
+                    ctx.fill();
+            })};
+
+            // Draw predicted path
+            if (orbitCheckbox.checked) {
+                // const predictedPath = predictPath(ship.x, ship.y, ship.vx, ship.vy, 100000, dt/10);
+                ctx.strokeStyle = "cyan";
+                ctx.beginPath();
+                if (predictedPath.length > 0) {
+                    const xPrime = xyInert(predictedPath[0].x, predictedPath[0].y, theta).x
+                    const yPrime = xyInert(predictedPath[0].x, predictedPath[0].y, theta).y
+                    ctx.moveTo(xPrime, yPrime);
+                    predictedPath.forEach(point => {
+                        ctx.lineTo(xyInert(point.x, point.y, point.theta).x, xyInert(point.x, point.y, point.theta).y);
+                    });
+                }
+            };
+            ctx.stroke();
+
+            // Draw the ship
+            ctx.save();
+            const xPrime = xyInert(ship.x, ship.y, theta).x
+            const yPrime = xyInert(ship.x, ship.y, theta).y
+            ctx.translate(xPrime, yPrime);
+            ctx.rotate(ship.angle);
+
+            ctx.fillStyle = "orange"
+
+            // Draw the thrusters
+            if (keys.ArrowUp) {
+                ctx.beginPath();
+                if (keys.Shift) ctx.moveTo(-ship.size, 0);
+                    else ctx.moveTo(-ship.size * 5/4, 0);
+                ctx.lineTo(-ship.size / 2, ship.size / 4);
+                ctx.lineTo(-ship.size / 2, -ship.size / 4);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            if (keys.ArrowLeft) {
+                ctx.beginPath();
+                ctx.moveTo(ship.size * 3/4, ship.size / 2);
+                ctx.lineTo(ship.size, 0);
+                ctx.lineTo(ship.size / 2, 0);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            if (keys.ArrowRight) {
+                ctx.beginPath();
+                ctx.moveTo(ship.size * 3/4, -ship.size / 2);
+                ctx.lineTo(ship.size, 0);
+                ctx.lineTo(ship.size / 2, 0);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Triangle ship shape
+            ctx.fillStyle = "white"
+            ctx.strokeStyle = "black";
+            ctx.beginPath();
+            ctx.moveTo(ship.size, 0);
+            ctx.lineTo(-ship.size / 2, ship.size / 2);
+            ctx.lineTo(-ship.size / 2, -ship.size / 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+    </script>
+</body>
+</html>
