@@ -15,7 +15,47 @@
             padding: 0;
             overflow: hidden;
             height: 100%;
+            font-family: 'Courier', sans-serif;  /* Default font */
         }
+
+        .sidebar {
+            width: 400px;
+            
+            background-color: rgba(0, 0, 0, 0); /* Slightly transparent black */
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0);
+            z-index: 15;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 2em;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            color: cyan;
+        }
+
         a:link {
             color: cyan;
             background-color: transparent;
@@ -26,7 +66,7 @@
             }
         #sliderContainer {
             position: absolute;
-            top: 20px;
+            top: 100px;
             left: 20px;
             color: white;
             font-family: Courier, sans-serif;
@@ -110,6 +150,11 @@
     </style>
 </head>
 <body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </div>
     <div id="sliderContainer">
         <div class="slider-group">
             <label for="curlyRSlider">Corotation radius/bar length (<span style="font-family:cursive">R</span>): </label>
@@ -155,15 +200,15 @@
         <br>
         <label for="starsCheckbox" style="color:white">Stars animation</label>
         <input type="checkbox" id="starsCheckbox">
-      </div>
-      <div id="infoContainer">
+    </div>
+    <div id="infoContainer">
         <p>Press <strong>[i]</strong> for instructions</p>
         <p>Press <strong>[j]</strong> for more information</p>
         <p>Press <strong>[r]</strong> to return ship to <i>L</i><sub>5</sub></p>
-      </div>
-      <div id="instructionScreen">
-        <h1 style="color:cyan">A spaceship walks into a bar...</h1>
-        <h2 style="color:cyan">Welcome to the <strong>Galactic Flight Simulator</strong>!</h2>
+    </div>
+    <div id="instructionScreen">
+        <!-- <h1 style="color:cyan">A spaceship walks into a bar...</h1> -->
+        <h1 style="color:cyan">Welcome to the <strong>Galactic Flight Simulator</strong>!</h2>
         <p>Navigate the <strong>RSS <i>Lynden-Bell</i></strong> through the rotating barred potential
             <br><br>You begin at the L<sub>5</sub> Lagrange point, in a stable orbit at the corotation resonance. Which other orbits can you reach?
         </p>
@@ -188,20 +233,23 @@
     <div id="aboutScreen">
         <h1 style="color:cyan">About</h1>
         <h2 style="color:cyan">Gravitational potential</h2>
-        <p>The barred potential implemented is taken from equation (5) in <a href="https://academic.oup.com/mnras/article/469/4/4414/3828797" target="_blank">Williams & Evans (2017)</a>.</p>
-        <p>This is produced by convolving a cored axisymmetric logarithmic potential with a needle density along the <i>x</i>-axis spanning [-<i>a</i>, <i>a</i>].</p>
-        <p>The bar length <i>a</i> is expressed in units of the core radius <i>R</i><sub>c</sub> (equal to 50 pixels).</p>
-        <p>The asymptotic circular speed of the logarithmic potential is <i>v</i><sub>0</sub> = 1.</p>
+        <p>The barred potential implemented is taken from equation (5) in <a href="https://academic.oup.com/mnras/article/469/4/4414/3828797" target="_blank">Williams & Evans (2017)</a>.
+            This is produced by convolving a cored axisymmetric logarithmic potential with a needle density along the <i>x</i>-axis spanning [-<i>a</i>, <i>a</i>].
+            The bar length <i>a</i> is expressed in units of the core radius <i>R</i><sub>c</sub> (equal to 50 pixels).
+            The asymptotic circular speed of the logarithmic potential is <i>v</i><sub>0</sub> = 1.
+        </p>
         <h2 style="color:cyan">Rotation</h2>
-        <p>By default the simulator is run in a frame corotating clockwise with the bar. This adds coriolis and centrifugal forces to the equations of motion.</p>
-        <p>The pattern speed is encoded in the ratio of the corotation radius to the bar length, <span style="font-family:cursive">R</span> = <i>R</i><sub>CR</sub>/<i>a</i>.</p>
-        <p>Optionally the pattern speed can be accelerated or decelerated with time. In this case the spaceship also experiences an Euler force.</p>
-        <p>The deceleration rate of the bar is quantified by the dimensionless deceleration parameter <i>&eta;</i> = <i>R&#775;</i><sub>CR</sub>/<i>v</i><sub>0</sub>.</p>
+        <p>By default the simulator is run in a frame corotating clockwise with the bar. This adds coriolis and centrifugal forces to the equations of motion.
+            The pattern speed is encoded in the ratio of the corotation radius to the bar length, <span style="font-family:cursive">R</span> = <i>R</i><sub>CR</sub>/<i>a</i>.
+            Optionally the pattern speed can be accelerated or decelerated with time. In this case the spaceship also experiences an Euler force.
+            The deceleration rate of the bar is quantified by the dimensionless deceleration parameter <i>&eta;</i> = <i>R&#775;</i><sub>CR</sub>/<i>v</i><sub>0</sub>.
+        </p>
         <h2 style="color:cyan">The background</h2>
-        <p>The cyan line indicates the future orbit of the spaceship, if no thrust is applied.</p>
-        <p>The yellow points indicate contours of the effective potential, including a centrifugal term.</p>
-        <p>The animated stars (off by default) follow circular paths at approximately the circular speed of the background logarithmic potential.</p>
-        <p>The radius at which the stars are stationary in the rotating frame indicates the corotation radius.</p>
+        <p>The cyan line indicates the future orbit of the spaceship, if no thrust is applied.
+            <br><br>The yellow points indicate contours of the effective potential, including a centrifugal term.
+            <br><br>The animated stars (off by default) follow circular paths at approximately the circular speed of the background logarithmic potential.
+            <br><br>The radius at which the stars are stationary in the rotating frame indicates the corotation radius.
+        </p>
         <h2 style="color:cyan">Press any key to return to the simulator</h2>
         
     </div>
